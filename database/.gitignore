@@ -1,0 +1,19 @@
+# --- Python Specific ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# --- Database (VERY IMPORTANT) ---
+# This prevents your local SQLite file from being uploaded
+*.db
+*.sqlite3
+
+# --- IDEs and Editors ---
+.vscode/
+.idea/
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
