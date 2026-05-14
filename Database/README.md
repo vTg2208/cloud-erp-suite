@@ -43,8 +43,8 @@ A robust, privacy-focused Enterprise Resource Planning (ERP) backend built with 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd <repo-folder>
+git clone [<your-repo-url>](https://github.com/vTg2208/cloud-erp-suite/tree/main/Database)
+cd Database
 
 ```
 
