@@ -17,27 +17,41 @@
 
 ##  Description
 
-This is a backend ERP system built using NestJS, Prisma ORM, and PostgreSQL. It provides REST APIs for managing employee data, authentication, and core ERP operations. The project follows a modular and scalable architecture for team development.
+This is a backend ERP system built using **NestJS**, **Prisma ORM**, and **PostgreSQL**. It provides RESTful APIs for managing core ERP functionalities such as employee management, authentication, and data operations. The project follows a modular and scalable architecture designed for maintainability and team collaboration.
+
+---
+
+##  Tech Stack
+
+- NestJS (Node.js Framework)
+- Prisma ORM
+- PostgreSQL
+- TypeScript
+- Node.js
 
 ---
 
 ##  Features
 
-- Employee management (CRUD)
-- Modular NestJS architecture
-- Prisma ORM integration
+- Employee management (Create, Read, Update, Delete)
+- Modular backend architecture using NestJS modules
+- Prisma ORM integration for database handling
 - PostgreSQL database support
 - REST API structure
-- Cloud ERP Backend System
+- Scalable and maintainable codebase
 
- Project Structure
+---
+
+##  Project Structure
+
+```bash
 src/
  ├── employee/        # Employee module
- ├── auth/            # Authentication module (if present)
- ├── prisma/          # Prisma service and config
+ ├── auth/            # Authentication module (if applicable)
+ ├── prisma/          # Prisma service and configuration
  ├── common/          # Shared utilities
- └── main.ts          # Entry point
- Project Setup
+ └── main.ts          # Application entry point
+## Project Setup
 1. Clone the repository
 git clone https://github.com/vTg2208/cloud-erp-suite.git
 cd cloud-erp-suite
@@ -56,7 +70,7 @@ Development mode
 npm run start:dev
 Production mode
 npm run start:prod
- Testing
+## Testing
 # Unit tests
 npm run test
 
@@ -65,32 +79,37 @@ npm run test:e2e
 
 # Test coverage
 npm run test:cov
- Common Issues
+## Common Issues
 Ensure PostgreSQL is running before starting the project
-Run Prisma migrations before starting the server
+Always run Prisma migrations before starting the server
 If dependencies break, delete node_modules and run npm install again
 Make sure .env file is properly configured
-Deployment
+## Deployment
 
-Refer to the official NestJS deployment guide:
+Refer to official NestJS deployment guide:
 https://docs.nestjs.com/deployment
 
-You can also use NestJS Mau for quick deployment:
+Optional NestJS deployment platform:
 
 npm install -g @nestjs/mau
 mau deploy
- Team Notes
-Keep .env file private (do not push to GitHub)
+ Team Guidelines
+Do NOT push .env file to GitHub
 Always pull latest changes before starting work
-Use feature branches for new updates
+Use feature branches for new features
 Commit small and meaningful changes
+Coordinate before modifying shared modules
  Future Improvements
 JWT Authentication system
 Role-based access control (RBAC)
 File upload system
+Swagger API documentation
 Frontend integration
 Docker deployment
  Resources
 https://docs.nestjs.com
 https://www.prisma.io/docs
 https://nodejs.org
+ Author
+Developed by: vTg2208
+
