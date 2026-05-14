@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased transition-colors duration-200;
+  }
+
+  .dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    @apply bg-gray-800 border-gray-700 text-gray-100;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md;
+  }
+
+  .dark .btn-primary {
+    @apply bg-primary-700 hover:bg-primary-600;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all duration-200 shadow-sm;
+  }
+
+  .dark .btn-secondary {
+    @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
+  }
+
+  .input-default {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200;
+  }
+
+  .dark .input-default {
+    @apply bg-gray-800 border-gray-700 text-gray-100 focus:ring-primary-400;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 transition-all duration-200;
+  }
+
+  .dark .card {
+    @apply bg-gray-900 border-gray-800 shadow-gray-950/50;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(14, 165, 233, 0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
