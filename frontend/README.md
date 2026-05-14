@@ -1,4 +1,4 @@
-# Amdox ERP
+# Amdox ERP (Vishal)
 
 Enterprise Resource Planning system built with MERN stack.
 
