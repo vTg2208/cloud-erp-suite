@@ -2,7 +2,7 @@
 
 ---
 
-# FastAPI ERP Backend (Nithish)
+# FastAPI ERP Backend API (Nithish)
 
 A robust, privacy-focused Enterprise Resource Planning (ERP) backend built with **FastAPI** and **SQLAlchemy**. This system provides a comprehensive API for managing users, employees, inventory, and financial records, utilizing a PostgreSQL database for persistent storage.
 
