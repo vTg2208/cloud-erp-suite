@@ -20,4 +20,8 @@ export class CreateEmployeeDto {
 
   @IsNumber()
   salary: number;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 }
