@@ -39,13 +39,13 @@ def get_db():
 @app.post("/register/", response_model=UserResponse)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     # 1. Logic: Check for existing username to prevent duplicates
-    existing_user = db.query(UserModel).filter(UserModel.username == user_data.username).first()
+    existing_user = db.query(UserModel).filter(UserModel.userid == user_data.userid).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already exists")
 
     # 2. Logic: Create the Database Object
     new_user = UserModel(
-        userid=user_data.username,  # Using username as userid for simplicity
+        userid=user_data.userid,
         username=user_data.username,
         password=user_data.password
     )

@@ -3,7 +3,7 @@ from datetime import date
 from typing import Optional
 
 class UserCreate(BaseModel):
-    company_id: str
+    userid: str
     username: str
     password: str
 
