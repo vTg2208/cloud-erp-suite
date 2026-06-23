@@ -16,7 +16,9 @@ class EmployeeCreate(BaseModel):
     employee_name: str
     department: str
     salary: int  
-    doj: date    # Pydantic automatically converts "YYYY-MM-DD" strings to date objects
+    doj: date   
+    email: str # Pydantic automatically converts "YYYY-MM-DD" strings to date objects
+    password: str
 
 class EmployeeResponse(EmployeeCreate):
     class Config:
@@ -29,6 +31,8 @@ class EmployeeEdit(BaseModel):
     department: str
     salary: str  
     doj: date  
+    email: str
+    password: str
 
 class EmployeeEditResponse(EmployeeEdit):
     class Config:

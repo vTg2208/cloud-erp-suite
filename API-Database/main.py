@@ -35,7 +35,10 @@ def get_db():
         db.close()
 
 # Logic: Fetch all employees from the database
-
+@app.get("/")
+def themain():
+    return {"Message" : "Welcome to Amdox API, You can Visit the Docs of the API for" , "Developer" : "Nithish (Group 1) (2month intern)"}
+    
 @app.post("/register/", response_model=UserResponse)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     # 1. Logic: Check for existing username to prevent duplicates
@@ -102,7 +105,9 @@ def create_employee(employee_data: EmployeeCreate, db: Session = Depends(get_db)
         employee_name=employee_data.employee_name,
         department=employee_data.department,
         salary=employee_data.salary,
-        doj=employee_data.doj
+        doj=employee_data.doj ,
+        email=employee_data.email ,
+        password = employee_data.password
     )
 
     # 3. Logic: Commit to the Database
