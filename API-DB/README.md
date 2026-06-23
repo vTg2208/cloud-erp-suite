@@ -117,7 +117,7 @@ This project implements `Base.metadata.create_all()`, ensuring that the database
 
 ---
 
-##Live API
+## Live API
 
 * **Link** :  `https://amdox-db-api.onrender.com/`
 * **Detailed Functioning Docs** : `https://amdox-db-api.onrender.com/docs`
