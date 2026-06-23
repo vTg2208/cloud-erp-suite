@@ -114,3 +114,10 @@ Once the server is running, you can access the interactive API documentation at:
 ## 🛡️ Privacy & Security
 
 This project implements `Base.metadata.create_all()`, ensuring that the database schema is automatically synchronized with the Python models. Sensitive data management and structured validation are handled via Pydantic schemas to ensure data integrity.
+
+---
+
+##Live API
+
+* **Link** :  `https://amdox-db-api.onrender.com/`
+* **Detailed Functioning Docs** : `https://amdox-db-api.onrender.com/docs`
