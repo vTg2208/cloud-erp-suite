@@ -2,6 +2,7 @@
 
 ---
 
+
 # FastAPI ERP Backend API (Nithish)
 
 A robust, privacy-focused Enterprise Resource Planning (ERP) backend built with **FastAPI** and **SQLAlchemy**. This system provides a comprehensive API for managing users, employees, inventory, and financial records, utilizing a PostgreSQL database for persistent storage.
@@ -114,3 +115,10 @@ Once the server is running, you can access the interactive API documentation at:
 ## 🛡️ Privacy & Security
 
 This project implements `Base.metadata.create_all()`, ensuring that the database schema is automatically synchronized with the Python models. Sensitive data management and structured validation are handled via Pydantic schemas to ensure data integrity.
+
+---
+
+
+* **Login API and Employee API is done by Alona and its there in the master branch** 
+
+---
