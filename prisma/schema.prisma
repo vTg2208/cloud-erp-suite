@@ -8,20 +8,53 @@ datasource db {
 }
 
 model Employee {
-   id          Int      @id @default(autoincrement())
-  name        String
-  email       String   @unique
-  password    String
-  department  String
-  designation String
-  phone       String?
-  salary      Float
-  createdAt   DateTime @default(now())
+  eid           String    @id @db.VarChar
+  employee_name String?   @db.VarChar
+  department    String?   @db.VarChar
+  salary        Int?
+  doj           DateTime? @db.Date
+  email         String?   @db.VarChar
+  password      String?   @db.VarChar
+
+  @@index([eid], map: "ix_Employee_eid")
 }
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      String   @default("employee")
-  createdAt DateTime @default(now())
+  userid   String  @id @db.VarChar
+  username String? @db.VarChar
+  password String? @db.VarChar
+
+  @@index([userid], map: "ix_User_userid")
+}
+
+model Colleges {
+  clg_id            String  @id @db.VarChar
+  clg_name          String? @db.VarChar
+  email             String? @db.VarChar
+  clg_location      String? @db.VarChar
+  clg_fashion_rules String? @db.VarChar
+  OTP               Int?
+
+  @@index([clg_id], map: "ix_Colleges_clg_id")
+}
+
+model Finance {
+  f_id        String    @id @db.VarChar
+  description String?   @db.VarChar
+  date        DateTime? @db.Date
+  type        String?   @db.VarChar
+  catergory   String?   @db.VarChar
+  amount      Float?
+  status      String?   @db.VarChar
+
+  @@index([f_id], map: "ix_Finance_f_id")
+}
+
+model Inventory {
+  item_id   String  @id @db.VarChar
+  item_name String? @db.VarChar
+  quantity  Int?
+  price     Float?
+
+  @@index([item_id], map: "ix_Inventory_item_id")
 }

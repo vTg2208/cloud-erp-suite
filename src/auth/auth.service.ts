@@ -22,10 +22,10 @@ export class AuthService {
     password: string,
   ): Promise<Omit<User, 'password'> | null> {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { userid: email },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
       return null;
     }
 
@@ -37,32 +37,34 @@ export class AuthService {
     return this.excludePassword(user);
   }
 
-  async login(user: { id: number; email: string; [key: string]: unknown }) {
-    const payload = { sub: user.id, email: user.email };
+  async login(user: Omit<User, 'password'>) {
+    const payload = { sub: user.userid, username: user.username };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
+
   async signup(data: SignupDto) {
-  try {
-    console.log('Received:', data);
+    try {
+      console.log('Received:', data);
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    console.log('Password hashed');
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      console.log('Password hashed');
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: data.email,
-        password: hashedPassword,
-      },
-    });
+      const user = await this.prisma.user.create({
+        data: {
+          userid: data.email,
+          username: data.email,
+          password: hashedPassword,
+        },
+      });
 
-    console.log('User created');
+      console.log('User created');
 
-    return this.excludePassword(user);
-  } catch (error) {
-    console.error(error);
-    throw error;
+      return this.excludePassword(user);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
-}
 }

@@ -18,6 +18,6 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
-    return this.authService.login(user as { id: number; email: string });
+    return this.authService.login(user);
   }
 }

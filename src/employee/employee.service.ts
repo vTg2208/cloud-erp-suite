@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EmployeeService {
   constructor(private prisma: PrismaService) {}
 
-  private excludePassword(employee: { password?: string; [key: string]: any }) {
+  private excludePassword<T extends { password?: string | null }>(employee: T) {
     const { password, ...result } = employee;
     return result;
   }
@@ -28,18 +28,19 @@ export class EmployeeService {
     const employees = await this.prisma.employee.findMany();
     return employees.map((employee) => this.excludePassword(employee));
   }
-  async findOne(id: number) {
-  const employee = await this.prisma.employee.findUnique({
-    where: { id },
-  });
+  async findOne(eid: string) {
+    const employee = await this.prisma.employee.findUnique({
+      where: { eid },
+    });
 
-  if (!employee) {
-    return null;
+    if (!employee) {
+      return null;
+    }
+
+    return this.excludePassword(employee);
   }
 
-  return this.excludePassword(employee);
-}
-  async updateEmployee(id: number, data: any) {
+  async updateEmployee(eid: string, data: any) {
     const updateData = { ...data };
 
     if (updateData.password) {
@@ -47,23 +48,23 @@ export class EmployeeService {
     }
 
     const employee = await this.prisma.employee.update({
-      where: { id },
+      where: { eid },
       data: updateData,
     });
 
     return this.excludePassword(employee);
   }
 
-  async deleteEmployee(id: number) {
+  async deleteEmployee(eid: string) {
     const employee = await this.prisma.employee.delete({
-      where: { id },
+      where: { eid },
     });
 
     return this.excludePassword(employee);
   }
 
   async findByEmail(email: string) {
-    return this.prisma.employee.findUnique({
+    return this.prisma.employee.findFirst({
       where: { email },
     });
   }

@@ -33,17 +33,18 @@ export class EmployeeController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-  return this.employeeService.findOne(Number(id));
+    return this.employeeService.findOne(id);
   }
+
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateEmployeeDto) {
-    return this.employeeService.updateEmployee(Number(id), body);
+    return this.employeeService.updateEmployee(id, body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.employeeService.deleteEmployee(Number(id));
+    return this.employeeService.deleteEmployee(id);
   }
 }
