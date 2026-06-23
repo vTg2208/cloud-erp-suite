@@ -4,7 +4,7 @@ from sqlalchemy import Column, Float, Integer, String, Date, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "postgresql://amdox_database_user:s8EHGHV9PtqRCUja1iRD8II9F2OljNOf@dpg-d82ond3bc2fs73bdhn8g-a.oregon-postgres.render.com/amdox_database"
+SQLALCHEMY_DATABASE_URL = "postgresql://amdox_db_9fia_user:vaIjA7EEl4Zk0MRdUWlKKhGhiUfFek3k@dpg-d8l2ms7lk1mc73cgd4ug-a.oregon-postgres.render.com/amdox_db_9fia"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
@@ -31,7 +31,9 @@ class EmployeeModel(Base):
     employee_name = Column(String)
     department = Column(String)
     salary = Column(Integer)
-    doj = Column(Date)                        # The Secret
+    doj = Column(Date) 
+    email = Column(String) # The Secret
+    password = Column(String)
 
 class InventoryModel(Base):
     __tablename__ = "Inventory"
