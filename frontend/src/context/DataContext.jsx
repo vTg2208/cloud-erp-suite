@@ -10,6 +10,8 @@ export function DataProvider({ children }) {
   const [inventory,  setInventory]  = useState([])
   const [tasks,      setTasks]      = useState([])
   const [transactions, setTransactions] = useState([])
+  const [leaves, setLeaves] = useState([])
+  const [invoices, setInvoices] = useState([])
   const [toast,      setToast]      = useState(null)
 
   const showToast = useCallback((msg, type = 'success') => {
@@ -21,12 +23,14 @@ export function DataProvider({ children }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [empRes, projRes, invRes, taskRes, finRes] = await Promise.all([
+        const [empRes, projRes, invRes, taskRes, finRes, leavesRes, invcRes] = await Promise.all([
           api.get(`${API_URL}/employees/`),
           api.get(`${API_URL}/projects/`),
           api.get(`${API_URL}/inventory/`),
           api.get(`${API_URL}/tasks/`),
-          api.get(`${API_URL}/finance/`)
+          api.get(`${API_URL}/finance/`),
+          api.get(`${API_URL}/hr/leaves/`),
+          api.get(`${API_URL}/finance/invoices/`)
         ])
         
         // Map Employees
@@ -95,6 +99,9 @@ export function DataProvider({ children }) {
           amount: f.amount,
           status: f.status
         })))
+
+        setLeaves(leavesRes.data)
+        setInvoices(invcRes.data)
 
       } catch (err) {
         console.error("Error fetching data:", err)
@@ -338,6 +345,46 @@ export function DataProvider({ children }) {
     }
   }, [showToast])
 
+  const addLeave = useCallback(async (data) => {
+    try {
+      const res = await api.post(`${API_URL}/hr/leaves/`, data)
+      setLeaves(l => [...l, res.data])
+      showToast('Leave request submitted')
+    } catch (err) {
+      showToast('Error submitting leave', 'error')
+    }
+  }, [showToast])
+
+  const updateLeaveStatus = useCallback(async (id, status) => {
+    try {
+      await api.put(`${API_URL}/hr/leaves/${id}?status=${status}`)
+      setLeaves(l => l.map(leave => leave.l_id === id ? { ...leave, status } : leave))
+      showToast(`Leave request ${status.toLowerCase()}`)
+    } catch (err) {
+      showToast('Error updating leave', 'error')
+    }
+  }, [showToast])
+
+  const createInvoice = useCallback(async (data) => {
+    try {
+      const res = await api.post(`${API_URL}/finance/invoices/`, data)
+      setInvoices(i => [...i, res.data])
+      showToast('Invoice created')
+    } catch (err) {
+      showToast('Error creating invoice', 'error')
+    }
+  }, [showToast])
+
+  const updateInvoiceStatus = useCallback(async (id, status) => {
+    try {
+      await api.put(`${API_URL}/finance/invoices/${id}?status=${status}`)
+      setInvoices(i => i.map(inv => inv.inv_id === id ? { ...inv, status } : inv))
+      showToast('Invoice updated')
+    } catch (err) {
+      showToast('Error updating invoice', 'error')
+    }
+  }, [showToast])
+
   return (
     <DataContext.Provider value={{
       employees, addEmployee, updateEmployee, deleteEmployee,
@@ -345,6 +392,8 @@ export function DataProvider({ children }) {
       inventory, addInventoryItem, updateInventoryItem, deleteInventoryItem,
       tasks,     addTask, updateTask, deleteTask, moveTask,
       transactions, addTransaction, deleteTransaction,
+      leaves, addLeave, updateLeaveStatus,
+      invoices, createInvoice, updateInvoiceStatus,
       toast, showToast,
     }}>
       {children}

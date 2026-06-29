@@ -3,8 +3,8 @@ import httpx
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from database import SessionLocal, EmployeeModel, InventoryModel, UserModel, FinanceModel, ProjectModel, TaskModel
-from schemas import EmployeeEdit, EmployeeEditResponse, FinanceCreate, FinanceResponse, ProjectCreate, ProjectResponse, TaskCreate, TaskResponse
+from database import SessionLocal, EmployeeModel, InventoryModel, UserModel, FinanceModel, ProjectModel, TaskModel, LeaveRequestModel, InvoiceModel
+from schemas import EmployeeEdit, EmployeeEditResponse, FinanceCreate, FinanceResponse, ProjectCreate, ProjectResponse, TaskCreate, TaskResponse, LeaveRequestCreate, LeaveRequestResponse, InvoiceCreate, InvoiceResponse
 from schemas import EmployeeCreate, EmployeeResponse, InventoryResponse, InventoryCreate, UserCreate, UserResponse, InventoryEdit, InventoryEditResponse
 from security import verify_password, get_password_hash, create_access_token, SECRET_KEY, ALGORITHM
 from jose import JWTError, jwt
@@ -295,3 +295,60 @@ def delete_task(t_id: str, db: Session = Depends(get_db), current_user: UserMode
     db.delete(task)
     db.commit()
     return {"detail": "Task deleted successfully"}
+
+@app.post("/hr/leaves/", response_model=LeaveRequestResponse)
+def create_leave(leave_data: LeaveRequestCreate, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    new_leave = LeaveRequestModel(
+        l_id=leave_data.l_id,
+        employee_id=leave_data.employee_id,
+        start_date=leave_data.start_date,
+        end_date=leave_data.end_date,
+        reason=leave_data.reason,
+        status=leave_data.status
+    )
+    db.add(new_leave)
+    db.commit()
+    db.refresh(new_leave)
+    return new_leave
+
+@app.get("/hr/leaves/")
+def read_leaves(db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    return db.query(LeaveRequestModel).all()
+
+@app.put("/hr/leaves/{l_id}")
+def update_leave_status(l_id: str, status: str, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    leave = db.query(LeaveRequestModel).filter(LeaveRequestModel.l_id == l_id).first()
+    if not leave:
+        raise HTTPException(status_code=404, detail="Leave request not found")
+    leave.status = status
+    db.commit()
+    db.refresh(leave)
+    return leave
+
+@app.post("/finance/invoices/", response_model=InvoiceResponse)
+def create_invoice(invoice_data: InvoiceCreate, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    new_invoice = InvoiceModel(
+        inv_id=invoice_data.inv_id,
+        client_name=invoice_data.client_name,
+        amount=invoice_data.amount,
+        due_date=invoice_data.due_date,
+        status=invoice_data.status
+    )
+    db.add(new_invoice)
+    db.commit()
+    db.refresh(new_invoice)
+    return new_invoice
+
+@app.get("/finance/invoices/")
+def read_invoices(db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    return db.query(InvoiceModel).all()
+
+@app.put("/finance/invoices/{inv_id}")
+def update_invoice_status(inv_id: str, status: str, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    invoice = db.query(InvoiceModel).filter(InvoiceModel.inv_id == inv_id).first()
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    invoice.status = status
+    db.commit()
+    db.refresh(invoice)
+    return invoice

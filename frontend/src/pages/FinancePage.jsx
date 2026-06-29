@@ -80,7 +80,7 @@ function TransactionModal({ open, onClose, initial }) {
 }
 
 export function FinancePage() {
-  const { transactions: allTx, addTransaction, deleteTransaction, showToast } = useData()
+  const { transactions: allTx, addTransaction, deleteTransaction, showToast, invoices, createInvoice, updateInvoiceStatus } = useData()
 
   const [filter,   setFilter]  = useState('All')
   const [txPage,   setTxPage]  = useState(1)
@@ -213,6 +213,40 @@ export function FinancePage() {
             <button className="erp-btn-ghost" style={{fontSize:12}} onClick={()=>setTxPage(p=>Math.min(totalPages,p+1))} disabled={txPage===totalPages}>Next →</button>
           </div>
         </div>
+      </div>
+
+      <div className="card" style={{marginTop: 16}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <span style={{fontSize:13,fontWeight:500,color:'var(--text2)'}}>Accounts Receivable (Invoices)</span>
+          <button onClick={()=>{
+            createInvoice({
+              inv_id: `INV-${Math.floor(Math.random()*10000)}`,
+              client_name: ['Acme Corp', 'Globex Inc', 'Stark Industries'][Math.floor(Math.random()*3)],
+              amount: Math.floor(Math.random()*10000) + 1000,
+              due_date: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
+              status: 'Unpaid'
+            })
+          }} className="erp-btn" style={{fontSize:12}}>+ Generate Invoice</button>
+        </div>
+        <table className="data-table">
+          <thead><tr><th>ID</th><th>Client Name</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {invoices?.map(inv=>(
+              <tr key={inv.inv_id}>
+                <td style={{fontFamily:'DM Mono,monospace',fontSize:12,color:'var(--text3)'}}>{inv.inv_id}</td>
+                <td style={{fontWeight:500}}>{inv.client_name}</td>
+                <td style={{fontFamily:'DM Mono,monospace',fontWeight:600}}>${inv.amount.toLocaleString()}</td>
+                <td style={{color:'var(--text2)',fontSize:12}}>{inv.due_date}</td>
+                <td><Badge variant={inv.status==='Paid'?'green':inv.status==='Unpaid'?'amber':'gray'}>{inv.status}</Badge></td>
+                <td>
+                  {inv.status !== 'Paid' && (
+                    <button onClick={()=>updateInvoiceStatus(inv.inv_id, 'Paid')} className="erp-btn-ghost" style={{padding:'4px 10px',fontSize:11}}>Mark Paid</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <TransactionModal open={addOpen} onClose={()=>setAddOpen(false)} initial={null} />

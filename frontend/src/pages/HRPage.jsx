@@ -87,7 +87,7 @@ function EmployeeModal({ open, onClose, initial }) {
 }
 
 export function HRPage() {
-  const { employees, deleteEmployee } = useData()
+  const { employees, deleteEmployee, leaves, addLeave, updateLeaveStatus } = useData()
   const [tab,    setTab]    = useState(0)
   const [search, setSearch] = useState('')
   const [dept,   setDept]   = useState('All')
@@ -216,21 +216,38 @@ export function HRPage() {
           <div className="card">
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
               <span style={{fontSize:13,fontWeight:500,color:'var(--text2)'}}>Leave Requests</span>
-              <Badge variant="amber">12 Pending</Badge>
+              <div style={{display:'flex',gap:10,alignItems:'center'}}>
+                <Badge variant="amber">{leaves?.filter(l=>l.status==='Pending').length || 0} Pending</Badge>
+                <button onClick={()=>{
+                  addLeave({
+                    l_id: `LR-${Math.floor(Math.random()*10000)}`,
+                    employee_id: employees[0]?.id || 'EMP0000',
+                    start_date: new Date().toISOString().split('T')[0],
+                    end_date: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
+                    reason: 'Sick Leave',
+                    status: 'Pending'
+                  })
+                }} className="erp-btn-ghost" style={{padding:'4px 8px',fontSize:11}}>+ Request Leave (Test)</button>
+              </div>
             </div>
-            {employees.slice(0,10).map((e,i)=>{
-              const types=['Annual Leave','Sick Leave','WFH','Maternity','Casual Leave','Sick Leave','Emergency','WFH','Annual Leave','Casual Leave']
-              const days =[5,2,3,90,1,3,2,5,7,1]
-              const statuses=['pending','approved','approved','approved','pending','rejected','pending','approved','approved','pending']
-              const sc={pending:'amber',approved:'green',rejected:'red'}
+            {leaves?.map((l)=>{
+              const emp = employees.find(e => e.id === l.employee_id) || { name: 'Unknown', avatar: '?', color: '#ccc' }
+              const sc = {Pending:'amber',Approved:'green',Rejected:'red'}
               return (
-                <div key={e.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
-                  <Avatar initials={e.avatar} color={e.color} size={30} />
+                <div key={l.l_id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
+                  <Avatar initials={emp.avatar} color={emp.color} size={30} />
                   <div style={{flex:1}}>
-                    <div style={{fontSize:13,fontWeight:500}}>{e.name}</div>
-                    <div style={{fontSize:11,color:'var(--text3)'}}>{types[i]} · {days[i]} day{days[i]>1?'s':''}</div>
+                    <div style={{fontSize:13,fontWeight:500}}>{emp.name}</div>
+                    <div style={{fontSize:11,color:'var(--text3)'}}>{l.reason} · {l.start_date} to {l.end_date}</div>
                   </div>
-                  <Badge variant={sc[statuses[i]]}>{statuses[i]}</Badge>
+                  {l.status === 'Pending' ? (
+                    <div style={{display:'flex',gap:6}}>
+                      <button onClick={()=>updateLeaveStatus(l.l_id, 'Approved')} className="erp-btn-ghost" style={{padding:'4px 10px',fontSize:11,color:'var(--green)',borderColor:'rgba(34,197,94,.3)'}}>Approve</button>
+                      <button onClick={()=>updateLeaveStatus(l.l_id, 'Rejected')} className="erp-btn-ghost" style={{padding:'4px 10px',fontSize:11,color:'var(--red)',borderColor:'rgba(239,68,68,.3)'}}>Reject</button>
+                    </div>
+                  ) : (
+                    <Badge variant={sc[l.status]||'gray'}>{l.status}</Badge>
+                  )}
                 </div>
               )
             })}

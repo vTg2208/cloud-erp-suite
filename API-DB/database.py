@@ -75,6 +75,26 @@ class TaskModel(Base):
     priority = Column(String)
     status = Column(String)
 
+class LeaveRequestModel(Base):
+    __tablename__ = "LeaveRequest"
+
+    l_id = Column(String, primary_key=True, index=True)
+    employee_id = Column(String)
+    start_date = Column(String)
+    end_date = Column(String)
+    reason = Column(String)
+    status = Column(String)  # Pending, Approved, Rejected
+
+class InvoiceModel(Base):
+    __tablename__ = "Invoice"
+
+    inv_id = Column(String, primary_key=True, index=True)
+    client_name = Column(String)
+    amount = Column(Float)
+    due_date = Column(String)
+    status = Column(String)  # Draft, Unpaid, Paid
+
+
 # This command tells SQLAlchemy to go find all models inheriting 
 # from "Base" and create the tables in the database file.
 Base.metadata.create_all(bind=engine)
