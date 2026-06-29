@@ -27,11 +27,15 @@ function TransactionModal({ open, onClose, initial }) {
   const isEdit = !!initial?.id
   const set = (k,v) => setForm(f=>({...f,[k]:v}))
 
-  // We manage transactions locally in this component since DataContext handles employees/projects/inventory
-  const handleSave = () => {
+  // We manage transactions via DataContext now
+  const handleSave = async () => {
     if (!form.desc.trim()) return alert('Description is required')
     if (!form.amount) return alert('Amount is required')
-    showToast(isEdit ? 'Transaction updated' : 'Transaction recorded')
+    if (!isEdit) {
+      await addTransaction(form)
+    } else {
+      showToast('Transaction updated (Local Only)')
+    }
     onClose()
     if (!isEdit) setForm(EMPTY_TX)
   }
@@ -76,29 +80,7 @@ function TransactionModal({ open, onClose, initial }) {
 }
 
 export function FinancePage() {
-  const { transactions: ctxTx } = useData()
-  // Use local tx state seeded from context/mockData so we can add/edit/delete in UI
-  const { showToast } = useData()
-  const [localTx, setLocalTx] = useState(null) // null = use mock
-  const { TRANSACTIONS: MOCK_TX } = (() => { try { return require('../data/mockData') } catch { return { TRANSACTIONS: [] } } })()
-
-  // Import transactions from mockData statically
-  const [allTx, setAllTx] = useState(() => {
-    // inline seed
-    return Array.from({length:18},(_,i)=>{
-      const isC = i%3!==0
-      const amts = [245000,180000,3240,18400,842000,24500,95000,12000,8400,340000,56000,2100,450000,7800,3600,280000,48000,1200]
-      const descs = ['Client Payment — Infosys Ltd','Client Payment — Wipro','Office Supplies','AWS Infrastructure','Employee Payroll','Marketing Campaign','Client Payment — TCS','Server Maintenance','Software Licenses','Project Milestone Payment','Consulting Revenue','Travel Expenses','Enterprise Contract — HCL','Office Renovation','Legal Services','SaaS Revenue Q2','Training & Development','Utilities']
-      const cats  = ['Revenue','Revenue','Operations','Technology','Personnel','Marketing','Revenue','Technology','Technology','Revenue','Revenue','Travel','Revenue','Operations','Legal','Revenue','Training','Operations']
-      const dates = ['Jun 4','Jun 3','Jun 3','Jun 2','May 31','May 29','May 28','May 25','May 22','May 20','May 18','May 15','May 12','May 10','May 8','May 5','May 2','Apr 30']
-      return {
-        id:`TXN-${9800+i}`, desc:descs[i], category:cats[i],
-        date:`${dates[i]}, 2025`, amount:amts[i],
-        type:isC?'credit':'debit',
-        status:i===3?'Pending':'Completed',
-      }
-    })
-  })
+  const { transactions: allTx, addTransaction, deleteTransaction, showToast } = useData()
 
   const [filter,   setFilter]  = useState('All')
   const [txPage,   setTxPage]  = useState(1)
@@ -109,19 +91,17 @@ export function FinancePage() {
 
   const txFiltered = filter==='All' ? allTx : allTx.filter(t=>t.type===filter.toLowerCase())
   const txPaged    = txFiltered.slice((txPage-1)*PER, txPage*PER)
-  const totalPages = Math.ceil(txFiltered.length/PER)
+  const totalPages = Math.ceil(txFiltered.length/PER) || 1
 
-  const totalRevenue = allTx.filter(t=>t.type==='credit').reduce((a,t)=>a+t.amount,0)
-  const totalExpenses= allTx.filter(t=>t.type==='debit').reduce((a,t)=>a+t.amount,0)
+  const totalRevenue = allTx.filter(t=>t.type==='credit').reduce((a,t)=>a+Number(t.amount),0)
+  const totalExpenses= allTx.filter(t=>t.type==='debit').reduce((a,t)=>a+Number(t.amount),0)
 
-  const handleAddTx = (form) => {
-    const id = `TXN-${9900+allTx.length}`
-    setAllTx(t=>[{ id, ...form, amount:Number(form.amount) }, ...t])
+  const handleAddTx = async (form) => {
+    await addTransaction(form)
   }
 
-  const handleDeleteTx = (id) => {
-    setAllTx(t=>t.filter(tx=>tx.id!==id))
-    showToast('Transaction deleted','warning')
+  const handleDeleteTx = async (id) => {
+    await deleteTransaction(id)
   }
 
   return (
