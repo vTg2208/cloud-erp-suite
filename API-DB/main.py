@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
+import httpx
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -207,6 +208,20 @@ def delete_finance_record(f_id: str, db: Session = Depends(get_db), current_user
     db.delete(record)
     db.commit()
     return {"detail": "Finance record deleted successfully"}
+
+@app.get("/api/ai/forecast/{item_id}")
+async def get_ai_forecast(item_id: str, request: Request, current_user: UserModel = Depends(get_current_user)):
+    # Proxy the request to the internal AI microservice running on port 8001
+    AI_SERVICE_URL = f"http://127.0.0.1:8001/forecast/inventory/{item_id}"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(AI_SERVICE_URL, timeout=10.0)
+            response.raise_for_status()
+            return response.json()
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=503, detail=f"AI Service unavailable: {exc}")
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(status_code=exc.response.status_code, detail="AI Service returned an error")
 
 @app.post("/projects/", response_model=ProjectResponse)
 def create_project(project_data: ProjectCreate, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
