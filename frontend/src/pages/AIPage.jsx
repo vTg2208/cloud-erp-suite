@@ -1,122 +1,123 @@
-const SUGGESTED_PROMPTS = [
-  'Summarize Q2 financial performance and key risks',
-  'Which departments are understaffed this quarter?',
-  'Generate a hiring plan for next 6 months',
-  'Identify top 3 inventory restock priorities',
-  'Predict revenue for Q3 based on current trends',
-  'Analyze employee attrition patterns',
-  'What projects are at risk of missing deadlines?',
-  'Compare our growth vs industry benchmarks',
-]
-
-const CHAT_HISTORY = [
-  { title:'Q2 Financial Analysis',   time:'Today',     msgs:3,  active:true },
-  { title:'Hiring Plan Review',      time:'Yesterday', msgs:7,  active:false },
-  { title:'Inventory Analysis',      time:'Jun 2',     msgs:5,  active:false },
-  { title:'Budget Forecast Q3',      time:'Jun 1',     msgs:12, active:false },
-  { title:'HR Attrition Deep Dive',  time:'May 30',    msgs:8,  active:false },
-  { title:'Project Risk Assessment', time:'May 28',    msgs:4,  active:false },
-]
+import { useState } from 'react';
+import api from '../api';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  AreaChart
+} from 'recharts';
 
 export function AIPage() {
+  const [itemId, setItemId] = useState('INV-001');
+  const [forecastData, setForecastData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const fetchForecast = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.get(`/api/ai/forecast/${itemId}`);
+      setForecastData(response.data.forecast);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to fetch forecast');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="page-enter" style={{ padding:24,height:'calc(100vh - 60px)',display:'flex',flexDirection:'column' }}>
+    <div className="page-enter" style={{ padding: 24, height: 'calc(100vh - 60px)', overflowY: 'auto' }}>
       {/* Header */}
-      <div style={{ marginBottom:20,flexShrink:0 }}>
-        <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:4 }}>
-          <div style={{ width:36,height:36,borderRadius:10,background:'linear-gradient(135deg,#4f8ef7,#a78bfa)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18 }}>✦</div>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#4f8ef7,#a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>✦</div>
           <div>
-            <h1 style={{ fontSize:22,fontWeight:600,letterSpacing:'-.4px',color:'var(--text)' }}>AI Assistant</h1>
-            <p style={{ fontSize:13,color:'var(--text2)' }}>Powered by advanced intelligence · Context-aware enterprise insights</p>
-          </div>
-          <div style={{ marginLeft:'auto',display:'flex',gap:8 }}>
-            <div style={{ background:'rgba(79,142,247,.15)',border:'1px solid rgba(79,142,247,.3)',borderRadius:20,padding:'4px 12px',fontSize:11,color:'var(--accent)',fontWeight:500 }}>● LIVE</div>
-            <button className="erp-btn-ghost" style={{ fontSize:12 }}>+ New Conversation</button>
+            <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-.4px', color: 'var(--text)' }}>AI Intelligence</h1>
+            <p style={{ fontSize: 13, color: 'var(--text2)' }}>Powered by proprietary time-series models & NLP</p>
           </div>
         </div>
       </div>
 
-      {/* Main layout */}
-      <div style={{ display:'grid',gridTemplateColumns:'280px 1fr',gap:16,flex:1,minHeight:0 }}>
-        {/* Left sidebar */}
-        <div style={{ display:'flex',flexDirection:'column',gap:12,overflow:'hidden' }}>
-          {/* Suggested prompts */}
-          <div className="card card-sm" style={{ flexShrink:0 }}>
-            <div style={{ fontSize:12,fontWeight:500,color:'var(--text2)',marginBottom:10,textTransform:'uppercase',letterSpacing:'.5px' }}>Suggested Prompts</div>
-            <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
-              {SUGGESTED_PROMPTS.slice(0,5).map((p,i) => (
-                <div key={i} style={{
-                  background:'var(--bg3)', border:'1px solid var(--border)',
-                  borderRadius:8, padding:'9px 10px', fontSize:12,
-                  color:'var(--text2)', cursor:'pointer', lineHeight:1.4,
-                  transition:'all .15s',
-                }}
-                  onMouseEnter={e=>{ e.currentTarget.style.borderColor='var(--border2)'; e.currentTarget.style.color='var(--text)' }}
-                  onMouseLeave={e=>{ e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.color='var(--text2)' }}
-                >{p}</div>
-              ))}
-            </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        {/* Demand Forecasting Widget */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Demand Forecasting (F-06)</h2>
+            <p style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>Predict 30-day inventory demand using Exponential Smoothing</p>
           </div>
-
-          {/* Chat history */}
-          <div className="card card-sm" style={{ flex:1,overflowY:'auto' }}>
-            <div style={{ fontSize:12,fontWeight:500,color:'var(--text2)',marginBottom:10,textTransform:'uppercase',letterSpacing:'.5px' }}>Chat History</div>
-            <div style={{ display:'flex',flexDirection:'column',gap:5 }}>
-              {CHAT_HISTORY.map((h,i) => (
-                <div key={i} style={{
-                  padding:'10px',
-                  background: h.active ? 'var(--accent-bg)' : 'var(--bg3)',
-                  borderRadius:8, cursor:'pointer',
-                  borderLeft: h.active ? '3px solid var(--accent)' : '3px solid transparent',
-                  transition:'all .15s',
-                }}
-                  onMouseEnter={e=>{ if(!h.active) e.currentTarget.style.background='var(--card2)' }}
-                  onMouseLeave={e=>{ if(!h.active) e.currentTarget.style.background='var(--bg3)' }}
-                >
-                  <div style={{ fontSize:12,fontWeight:h.active?500:400,color:h.active?'var(--text)':'var(--text2)',marginBottom:3 }}>{h.title}</div>
-                  <div style={{ fontSize:11,color:'var(--text3)' }}>{h.time} · {h.msgs} messages</div>
-                </div>
-              ))}
+          <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <input
+                className="erp-input"
+                style={{ flex: 1 }}
+                value={itemId}
+                onChange={(e) => setItemId(e.target.value)}
+                placeholder="Enter Item ID (e.g., INV-001)"
+              />
+              <button className="erp-btn" onClick={fetchForecast} disabled={loading}>
+                {loading ? 'Analyzing...' : 'Generate Forecast'}
+              </button>
             </div>
-          </div>
 
-          {/* Quick stats */}
-          <div className="card card-sm" style={{ flexShrink:0 }}>
-            <div style={{ fontSize:12,fontWeight:500,color:'var(--text2)',marginBottom:10 }}>Usage This Month</div>
-            {[['Conversations','24'],['Messages','187'],['Reports Generated','12']].map(([l,v])=>(
-              <div key={l} className="stat-row" style={{ padding:'7px 0' }}>
-                <span style={{ fontSize:12,color:'var(--text2)' }}>{l}</span>
-                <span style={{ fontSize:13,fontWeight:600 }}>{v}</span>
+            {error && (
+              <div style={{ padding: 12, background: 'var(--red-bg)', color: 'var(--red)', borderRadius: 8, fontSize: 13 }}>
+                {error}
               </div>
-            ))}
+            )}
+
+            {forecastData.length > 0 ? (
+              <div style={{ height: 300, marginTop: 16 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={forecastData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorDemand" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="var(--accent)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                    <XAxis dataKey="date" tick={{fontSize: 10, fill: 'var(--text3)'}} axisLine={false} tickLine={false} minTickGap={20} />
+                    <YAxis tick={{fontSize: 10, fill: 'var(--text3)'}} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }}
+                      itemStyle={{ color: 'var(--accent)' }}
+                    />
+                    <Area type="monotone" dataKey="predicted_demand" stroke="var(--accent)" strokeWidth={3} fillOpacity={1} fill="url(#colorDemand)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg3)', borderRadius: 12, minHeight: 200, border: '1px dashed var(--border)' }}>
+                <span style={{ fontSize: 13, color: 'var(--text3)' }}>Enter an Item ID to see the forecast</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* AI Iframe */}
-        <div style={{
-          borderRadius:14, overflow:'hidden',
-          border:'1px solid var(--border)',
-          background:'var(--card)',
-          display:'flex', flexDirection:'column',
-        }}>
-          {/* Iframe header */}
-          <div style={{ padding:'12px 18px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:10,flexShrink:0 }}>
-            <div style={{ width:8,height:8,borderRadius:'50%',background:'var(--green)' }}></div>
-            <span style={{ fontSize:13,color:'var(--text2)' }}>Amdox AI · Enterprise Intelligence</span>
-            <div style={{ marginLeft:'auto',display:'flex',gap:6 }}>
-              <button className="erp-btn-ghost" style={{ fontSize:11,padding:'4px 10px' }}>Clear</button>
-              <button className="erp-btn-ghost" style={{ fontSize:11,padding:'4px 10px' }}>Export</button>
+        {/* NLP Chatbot Widget */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h2 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Conversational AI</h2>
+              <p style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>Ask questions about company data</p>
             </div>
+            <div style={{ background: 'rgba(79,142,247,.15)', border: '1px solid rgba(79,142,247,.3)', borderRadius: 20, padding: '4px 12px', fontSize: 11, color: 'var(--accent)', fontWeight: 500 }}>● ONLINE</div>
           </div>
           <iframe
             src="https://www.chatbase.co/chatbot-iframe/Qo13UNSzDfdfBox_SN8YJ"
             width="100%"
-            style={{ flex:1,border:'none',minHeight:500 }}
+            style={{ flex: 1, border: 'none', minHeight: 400 }}
             allow="microphone"
             title="Amdox AI Assistant"
           />
         </div>
       </div>
     </div>
-  )
+  );
 }
