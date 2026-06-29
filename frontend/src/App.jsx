@@ -1,6 +1,7 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { AppProvider }  from './context/AppContext'
 import { DataProvider } from './context/DataContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { Sidebar }      from './components/layout/Sidebar'
 import { Topbar }       from './components/layout/Topbar'
 import { NotificationPanel } from './components/layout/NotificationPanel'
@@ -16,6 +17,14 @@ import { AnalyticsPage }  from './pages/AnalyticsPage'
 import { ReportsPage }    from './pages/ReportsPage'
 import { AIPage }         from './pages/AIPage'
 import { SettingsPage }   from './pages/SettingsPage'
+import { AuthPage }       from './pages/AuthPage'
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+}
 
 function Layout() {
   return (
@@ -46,10 +55,19 @@ function Layout() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <DataProvider>
-        <Layout />
-      </DataProvider>
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <DataProvider>
+          <Routes>
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/*" element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </DataProvider>
+      </AppProvider>
+    </AuthProvider>
   )
 }
