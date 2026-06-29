@@ -209,10 +209,13 @@ def delete_finance_record(f_id: str, db: Session = Depends(get_db), current_user
     db.commit()
     return {"detail": "Finance record deleted successfully"}
 
+import os
+
 @app.get("/api/ai/forecast/{item_id}")
 async def get_ai_forecast(item_id: str, request: Request, current_user: UserModel = Depends(get_current_user)):
-    # Proxy the request to the internal AI microservice running on port 8001
-    AI_SERVICE_URL = f"http://127.0.0.1:8001/forecast/inventory/{item_id}"
+    # Proxy the request to the internal AI microservice
+    base_url = os.environ.get("AI_SERVICE_URL", "http://127.0.0.1:8001")
+    AI_SERVICE_URL = f"{base_url}/forecast/inventory/{item_id}"
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(AI_SERVICE_URL, timeout=10.0)
