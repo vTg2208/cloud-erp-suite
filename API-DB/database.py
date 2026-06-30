@@ -53,32 +53,47 @@ class FinanceModel(Base):
     catergory = Column(String)  
     amount = Column(Float)
     status = Column(String)  # "Pending", "Approved", "Rejected"
-    
 
-# class Expenses(Base):
- #   __tablename__ = "Expenses"
+class ProjectModel(Base):
+    __tablename__ = "Project"
 
- #   item_id = Column(String, primary_key=True, index=True) # Unique ID
- #   item_name = Column(String)
-  #  quantity = Column(Integer)
-#    price = Column(Float)
+    p_id = Column(String, primary_key=True, index=True)
+    project_name = Column(String)
+    department = Column(String)
+    budget = Column(Float)
+    team = Column(Integer)
+    status = Column(String)
+    start_date = Column(String)
 
+class TaskModel(Base):
+    __tablename__ = "Task"
 
-#class Supplier(Base):
- #   __tablename__ = "Supplier"
-#
- #   supplier_id = Column(String, primary_key=True, index=True) # Unique ID
-  #  supplier_name = Column(String)
-   # contact_info = Column(String)
+    t_id = Column(String, primary_key=True, index=True)
+    title = Column(String)
+    assignee = Column(String)
+    project_id = Column(String)
+    priority = Column(String)
+    status = Column(String)
 
-#class Orders(Base):
- #   __tablename__ = "Orders"
-#
- #   order_id = Column(String, primary_key=True, index=True) # Unique ID
-  #  supplier_id = Column(String)
-   # item_name = Column(String)
-    #quantity = Column(Integer)
-    #price = Column(Float)
+class LeaveRequestModel(Base):
+    __tablename__ = "LeaveRequest"
+
+    l_id = Column(String, primary_key=True, index=True)
+    employee_id = Column(String)
+    start_date = Column(String)
+    end_date = Column(String)
+    reason = Column(String)
+    status = Column(String)  # Pending, Approved, Rejected
+
+class InvoiceModel(Base):
+    __tablename__ = "Invoice"
+
+    inv_id = Column(String, primary_key=True, index=True)
+    client_name = Column(String)
+    amount = Column(Float)
+    due_date = Column(String)
+    status = Column(String)  # Draft, Unpaid, Paid
+
 
 # This command tells SQLAlchemy to go find all models inheriting 
 # from "Base" and create the tables in the database file.

@@ -178,6 +178,30 @@ Critical read views remain functional even **without internet connectivity**, wi
 
 ---
 
+## Local Setup & Deployment
+
+This project is fully containerized using Docker, allowing you to run the entire ERP suite (Frontend, Backend, and AI Service) with a single command.
+
+### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Running the Application
+
+1. Clone the repository and navigate to the root directory.
+2. Build and start the microservices:
+   ```bash
+   docker-compose up --build -d
+   ```
+3. Access the application:
+   - **Frontend UI**: `http://localhost:5173`
+   - **FastAPI Backend**: `http://localhost:8000`
+   - **AI Microservice**: `http://localhost:8001` (Internal Only)
+
+*Note: The frontend is served via an optimized Nginx multi-stage build, and the API proxies internally to the AI service.*
+
+---
+
 ## Target Users
 
 | User Segment | Primary Use Case |

@@ -90,3 +90,51 @@ class FinanceCreate(BaseModel):
 class FinanceResponse(FinanceCreate):
     class Config:
         from_attributes = True
+
+class ProjectCreate(BaseModel):
+    p_id: str
+    project_name: str
+    department: str
+    budget: float
+    team: int
+    status: str
+    start_date: str
+
+class ProjectResponse(ProjectCreate):
+    class Config:
+        from_attributes = True
+
+class TaskCreate(BaseModel):
+    t_id: str
+    title: str
+    assignee: str
+    project_id: str
+    priority: str
+    status: str
+
+class TaskResponse(TaskCreate):
+    class Config:
+        from_attributes = True
+
+class LeaveRequestCreate(BaseModel):
+    l_id: str
+    employee_id: str
+    start_date: str
+    end_date: str
+    reason: str
+    status: str
+
+class LeaveRequestResponse(LeaveRequestCreate):
+    class Config:
+        from_attributes = True
+
+class InvoiceCreate(BaseModel):
+    inv_id: str
+    client_name: str
+    amount: float
+    due_date: str
+    status: str
+
+class InvoiceResponse(InvoiceCreate):
+    class Config:
+        from_attributes = True
